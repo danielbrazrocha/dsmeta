@@ -14,19 +14,26 @@ type FormDates = {
 
 
 function SalesCard() {
+  const minDateInitialValue = new Date(new Date().setDate(new Date().getDate() - 365));
+  
+  const [dates,setDates] = useState<FormDates>({minDate: minDateInitialValue , maxDate: new Date() })
+  
+  const [sales, setSales] = useState<Sale[]>([])
   
   useEffect(() => {
     axios.get(`${BASE_URL}/sales`)
+
+    const dmin = dates.minDate.toISOString().slice(0, 10);
+    const dmax = dates.maxDate.toISOString().slice(0, 10);
+
+    console.log(dmin);
+
+    axios.get(`${BASE_URL}/sales?minDate=${dmin}&maxDate=${dmax}`)
         .then(response => {
             setSales(response.data.content);
         });
-  }, []);
+    }, [dates]);
 
-  const minDateInitialValue = new Date(new Date().setDate(new Date().getDate() - 365));
-
-  const [dates,setDates] = useState<FormDates>({minDate: minDateInitialValue , maxDate: new Date() })
-
-  const [sales, setSales] = useState<Sale[]>([])
     
   
     return (
